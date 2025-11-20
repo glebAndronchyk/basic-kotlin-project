@@ -38,7 +38,7 @@ val mockStreams = listOf(
 )
 
 @Composable()
-fun WatchScreen() {
+fun WatchScreen(onStreamClick: (String) -> Unit) {
     var selectedStreamId by remember { mutableIntStateOf(0) }
 
     AppLayout(title = "Streams") {
@@ -46,7 +46,10 @@ fun WatchScreen() {
             Row(
                 modifier = Modifier
                     .then(if (selectedStreamId == stream.id) Modifier.background(Purple80) else Modifier.background(Color(0xFFF)))
-                    .clickable(enabled = true, onClick = { selectedStreamId = stream.id })
+                    .clickable(enabled = true, onClick = {
+                        selectedStreamId = stream.id
+                        onStreamClick(stream.id.toString());
+                    })
             ) {
                 AsyncImage(
                     model = stream.imageUrl,
