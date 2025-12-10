@@ -8,12 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.lb1.data.MockData
 import com.example.lb1.ui.kit.Title
 import com.example.lb1.ui.layouts.AppLayout
 
 @Composable
 fun StreamScreen(streamId: String, navController: NavHostController) {
-    val streamEntity = mockStreams.find { streamDto ->  streamDto.id.toString() == streamId }
+    val streamEntity = MockData.mockStreams.find { streamDto ->  streamDto.id.toString() == streamId }
 
     if (streamEntity == null) {
         AppLayout(
@@ -30,7 +31,7 @@ fun StreamScreen(streamId: String, navController: NavHostController) {
                     modifier = Modifier.weight(1f)
                 ) {
                     AsyncImage(
-                        model = streamEntity.imageUrl,
+                        model = streamEntity.previewUrl,
                         contentDescription = "Stream",
                         modifier = Modifier.fillMaxWidth().height(300.dp)
                     )
