@@ -46,7 +46,7 @@ object Watch : AppDestination {
         override val path: String
             get() = "/stream/{streamId}"
 
-        fun createRoute(streamId: String): String = "/stream/$streamId"
+        fun createRoute(streamId: Number): String = "/stream/$streamId"
     }
 }
 
