@@ -6,7 +6,7 @@ data class StreamPresentation(
     val description: String,
     val id: Number,
     val narratorName: String,
-    val narratorId: String,
+    val narratorId: Long,
 )
 
 data class ClipPresentation(
