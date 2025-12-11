@@ -15,7 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.lb1.ui.kit.Title
 import com.example.lb1.ui.layouts.AppLayout
@@ -181,8 +188,22 @@ fun StreamComposable(stream: StreamPresentation,  onStreamClick: (Number) -> Uni
     }
 }
 
+
+@Composable
+fun SettingsButton(onClick: () -> Unit) {
+    IconButton(onClick = { onClick() }) {
+        Icon(
+            imageVector = Icons.Filled.Settings,
+            contentDescription = "Settings"
+        )
+    }
+}
+
+
 @Composable
 fun WatchScreen(
+    navController: NavHostController = rememberNavController(),
+    onSettingsClick: () -> Unit,
     onStreamClick: (Number) -> Unit,
     viewModel: StreamsViewModel = viewModel()
 ) {
@@ -213,7 +234,9 @@ fun WatchScreen(
         }
     }
 
-    AppLayout(title = "Watch") {
+    AppLayout(title = "Watch", navController = navController, rightAdornment = {
+        SettingsButton(onClick = { onSettingsClick() })
+    }) {
         LazyColumn (
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)

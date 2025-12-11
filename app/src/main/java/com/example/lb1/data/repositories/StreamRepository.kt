@@ -1,6 +1,7 @@
 package com.example.lb1.data.repositories
 
 import com.example.lb1.data.database.AppDatabase
+import com.example.lb1.domain.model.CreateStreamDto
 import com.example.lb1.domain.model.Stream
 import com.example.lb1.domain.model.StreamWithRelations
 
@@ -11,7 +12,14 @@ class StreamRepository(
         return database.streamDao().getAllWithRelations()
     }
 
-    suspend fun insertStream(stream: Stream): Long {
+    suspend fun insertStream(dto: CreateStreamDto): Long {
+        val stream = Stream(
+            id = 0,
+            narratorId = dto.narratorId,
+            previewUrl = dto.previewUrl,
+            name = dto.name,
+            description = dto.description
+        )
         return database.streamDao().insert(stream)
     }
 

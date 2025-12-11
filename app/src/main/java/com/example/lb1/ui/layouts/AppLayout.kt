@@ -24,7 +24,12 @@ import com.example.lb1.ui.kit.Title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable()
-fun AppLayout(title: String, navController: NavHostController = rememberNavController(), content: @Composable ColumnScope.() -> Unit) {
+fun AppLayout(
+    title: String,
+    navController: NavHostController = rememberNavController(),
+    rightAdornment: (@Composable () -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopAppBar(
             title = {  Title(text = title) },
@@ -37,6 +42,9 @@ fun AppLayout(title: String, navController: NavHostController = rememberNavContr
                         )
                     }
                 }
+            },
+            actions = {
+                rightAdornment?.invoke()
             }
         )
     }) { innerPadding ->

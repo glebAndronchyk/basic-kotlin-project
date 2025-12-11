@@ -34,6 +34,26 @@ object Watch : AppDestination {
     override val path: String
         get() = "/watch"
 
+    object Configure : AppDestination {
+        override val icon: ImageVector
+            get() = TODO("Not yet implemented")
+        override val label: String
+            get() = TODO("Not yet implemented")
+        override val path: String
+            get() = "/configure"
+        override fun createRoute(): String = "/configure"
+
+        object Narrator : AppDestination {
+            override val icon: ImageVector
+                get() = TODO("Not yet implemented")
+            override val label: String
+                get() = TODO("Not yet implemented")
+            override val path: String
+                get() = "/configure/narrator"
+            override fun createRoute(): String = "/configure/narrator"
+        }
+    }
+
     object Stream : AppDestination {
         override val icon: ImageVector
             get() = TODO("Not yet implemented")

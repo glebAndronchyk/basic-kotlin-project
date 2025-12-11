@@ -1,6 +1,7 @@
 package com.example.lb1.data.repositories
 
 import com.example.lb1.data.database.AppDatabase
+import com.example.lb1.domain.model.CreateCreatorDto
 import com.example.lb1.domain.model.Creator
 
 class CreatorRepository(
@@ -10,7 +11,12 @@ class CreatorRepository(
         return database.creatorDao().getAll()
     }
 
-    suspend fun insertCreator(creator: Creator): Long {
+    suspend fun insertCreator(dto: CreateCreatorDto): Long {
+        val creator = Creator(
+            id = 0,
+            avatar = dto.avatar,
+            name = dto.name
+        )
         return database.creatorDao().insert(creator)
     }
 

@@ -1,6 +1,7 @@
 package com.example.lb1.data.repositories
 
 import com.example.lb1.data.database.AppDatabase
+import com.example.lb1.domain.model.CreateNarratorDto
 import com.example.lb1.domain.model.Narrator
 
 class NarratorRepository(
@@ -10,7 +11,12 @@ class NarratorRepository(
         return database.narratorDao().getAll()
     }
 
-    suspend fun insertNarrator(narrator: Narrator): Long {
+    suspend fun insertNarrator(dto: CreateNarratorDto): Long {
+        val narrator = Narrator(
+            id = 0,
+            avatar = dto.avatar,
+            name = dto.name
+        )
         return database.narratorDao().insert(narrator)
     }
 
