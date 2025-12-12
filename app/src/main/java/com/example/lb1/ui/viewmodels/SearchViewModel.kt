@@ -1,44 +1,42 @@
 package com.example.lb1.ui.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.lb1.data.database.DbProvider
+import com.example.lb1.data.repositories.GameRepository
+import com.example.lb1.domain.resources.HttpGamesResource
+import com.example.lb1.domain.resources.ListOfGamesResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.collections.emptyList
 
 data class GameDto(
+    val id: String,
     val name: String,
     val description: String
 )
 
-val mockGames = listOf(
-    GameDto(
-        name = "Cyber Warriors 2077",
-        description = "An immersive open-world RPG set in a dystopian future where technology and humanity collide. Navigate through neon-lit streets and make choices that shape your destiny."
-    ),
-    GameDto(
-        name = "Fantasy Quest: Legends",
-        description = "Embark on an epic adventure through mystical lands filled with dragons, magic, and ancient treasures. Gather your party and save the kingdom from darkness."
-    ),
-    GameDto(
-        name = "Zombie Survival Protocol",
-        description = "Fight for survival in a post-apocalyptic world overrun by the undead. Scavenge for resources, build shelter, and form alliances to stay alive."
-    ),
-    GameDto(
-        name = "Speed Racers Ultimate",
-        description = "Experience high-octane racing action with stunning graphics and realistic physics. Compete in global tournaments and customize your dream car."
-    ),
-    GameDto(
-        name = "Puzzle Master Deluxe",
-        description = "Challenge your mind with hundreds of brain-teasing puzzles. From logic riddles to spatial challenges, each level will test your problem-solving skills."
-    )
-)
+class SearchViewModel(application: Application) : AndroidViewModel(application) {
+    private val gamesRepository = GameRepository(DbProvider.getDatabase(application))
+    private val gamesResource: HttpGamesResource = HttpGamesResource;
 
-class SearchViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _searchResults = MutableStateFlow(mockGames)
+    private val _searchResults = MutableStateFlow<List<GameDto>>(emptyList())
     val searchResults: StateFlow<List<GameDto>> = _searchResults.asStateFlow()
+
+    init {
+        fetchData()
+    }
 
     fun changeSearchQuery(query: String) {
         _searchQuery.value = query;
@@ -47,9 +45,42 @@ class SearchViewModel : ViewModel() {
 
     fun performSearch() {
         _searchResults.value = if (_searchQuery.value.isEmpty()) {
-            mockGames
+            _searchResults.value
         } else {
-            mockGames.filter { (name, description) -> name.contains(_searchQuery.value, ignoreCase = true) }
+            _searchResults.value.filter { (name, description) -> name.contains(_searchQuery.value, ignoreCase = true) }
         }
+    }
+
+    fun saveUniqueToDb() {
+        viewModelScope.launch {
+            gamesRepository.insertUniqueOnly(searchResults.value.map { value -> com.example.lb1.domain.model.GameDto(
+                id = value.id,
+                name = value.name,
+                description = value.description,
+            ) })
+        }
+    }
+
+    private fun fetchData() {
+        gamesResource.listAllGames().enqueue(object : Callback<List<ListOfGamesResponse>> {
+            override fun onFailure(call: Call<List<ListOfGamesResponse>>, t: Throwable) {
+                _searchResults.value = emptyList()
+            }
+
+            override fun onResponse(
+                call: Call<List<ListOfGamesResponse>>,
+                response: Response<List<ListOfGamesResponse>>
+            ) {
+                val games = response.body()
+
+                _searchResults.value = games?.map { game ->
+                    GameDto(
+                        id = game.id,
+                        name = game.name,
+                        description = game.description
+                    )
+                } ?: emptyList()
+            }
+        })
     }
 }

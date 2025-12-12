@@ -31,3 +31,9 @@ data class CreateCreatorDto(
     val avatar: String,
     val name: String,
 )
+
+data class GameDto(
+    val id: String,
+    val name: String,
+    val description: String,
+)

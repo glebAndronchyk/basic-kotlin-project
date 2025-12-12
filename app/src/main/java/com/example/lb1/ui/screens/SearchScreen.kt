@@ -1,9 +1,16 @@
 package com.example.lb1.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,7 +31,14 @@ fun SearchScreen(searchViewModel: SearchViewModel = viewModel()) {
     val searchQuery by searchViewModel.searchQuery.collectAsState();
     val searchResults by searchViewModel.searchResults.collectAsState();
 
-    AppLayout(title = "Search Games") {
+    AppLayout(title = "Search Games", rightAdornment = {
+        IconButton(onClick = { searchViewModel.saveUniqueToDb() }) {
+            Icon(
+                imageVector = Icons.Filled.Send,
+                contentDescription = "Save"
+            )
+        }
+    }) {
         Row() {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -35,16 +49,16 @@ fun SearchScreen(searchViewModel: SearchViewModel = viewModel()) {
         }
 
         Row() {
-            Column() {
-                searchResults.forEach { game ->
+            LazyColumn ( modifier = Modifier.fillMaxSize() ) {
+                items(searchResults) { result ->
                     Row(
                         modifier = Modifier
                             .weight(1f),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Title(text = game.name, modifier = Modifier.weight(1f))
+                        Title(text = result.name, modifier = Modifier.weight(1f))
                         Text(
-                            text = game.description,
+                            text = result.description,
                             modifier = Modifier.weight(1f),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal,

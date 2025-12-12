@@ -3,11 +3,14 @@ package com.example.lb1.data.daos
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
 import androidx.room.Update
 import com.example.lb1.domain.model.Clip
 import com.example.lb1.domain.model.ClipWithRelations
 import com.example.lb1.domain.model.Creator
+import com.example.lb1.domain.model.Game
 import com.example.lb1.domain.model.Narrator
 import com.example.lb1.domain.model.Stream
 import com.example.lb1.domain.model.StreamWithRelations
@@ -59,3 +62,10 @@ interface CreatorDao {
     @Delete
     suspend fun delete(creator: Creator)
 }
+
+@Dao
+interface GameDao {
+    @Insert(onConflict = IGNORE)
+    suspend fun insertUniqueOnly(games: List<Game>): List<Long>
+}
+

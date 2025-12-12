@@ -119,3 +119,14 @@ data class Creator(
     val avatar: String,
     val name: String,
 )
+
+
+@Entity(
+    tableName = "games",
+)
+data class Game(
+    @PrimaryKey() val id: String,
+    val description: String,
+    val name: String,
+)
+
